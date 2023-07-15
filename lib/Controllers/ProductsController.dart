@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shopsavvy/Controllers/Common/HttpController.dart';
+import 'package:shopsavvy/Models/DB/User.dart';
 import 'package:shopsavvy/Models/Utils/APIRoutes.dart';
 import 'package:shopsavvy/Models/Utils/JsonResponse.dart';
 import 'package:shopsavvy/Models/Utils/Utils.dart';
@@ -8,112 +9,92 @@ class ProductsController {
   final HttpController _httpController = HttpController();
 
   Future<dynamic> getProducts(context, Map<String, dynamic> data) async {
-    dynamic _listResp = [];
+    dynamic listResp = [];
     await _httpController
         .doGet(APIRoutes.getRoute('PRODUCTS_GET'), {}, data)
         .then((Response response) async {
-      _listResp = JsonResponse.fromJson(response.data).data;
+      listResp = JsonResponse.fromJson(response.data).data;
     });
 
-    return _listResp;
-  }
-
-  Future<dynamic> getShops(context) async {
-    CustomUtils.showLoader(context);
-    dynamic _listResp = [];
-    await _httpController.doGet(APIRoutes.getRoute('SHOPS_GET'), {}, {}).then(
-        (Response response) async {
-      CustomUtils.hideLoader(context);
-      _listResp = JsonResponse.fromJson(response.data).data;
-    });
-
-    return _listResp;
+    return listResp;
   }
 
   Future<dynamic> getCartProducts(context) async {
-    dynamic _data = [];
-    await _httpController.doGet(APIRoutes.getRoute('CART_PRODUCTS_GET'), {}, {
-      'user': CustomUtils.getUser().id.toString()
-    }).then((Response response) async {
-      _data = JsonResponse.fromJson(response.data).data;
+    User? storedUser = await User.getUser();
+    dynamic data = [];
+    await _httpController.doGet(APIRoutes.getRoute('CART_PRODUCTS_GET'), {},
+        {'user': storedUser.id.toString()}).then((Response response) async {
+      data = JsonResponse.fromJson(response.data).data;
     });
+    print(data);
 
-    return _data;
+    return data;
   }
 
-  Future<dynamic> getCartSuggetions(context) async {
+  Future<dynamic> addCartProduct(context, String rfid) async {
+    User? storedUser = await User.getUser();
     dynamic data = [];
-    CustomUtils.showLoader(context);
-    await _httpController.doGet(
-        APIRoutes.getRoute('CART_SUGGETIONS_PRODUCT_GET'), {}, {
-      'user': CustomUtils.getUser().id.toString()
+    await _httpController.doGet(APIRoutes.getRoute('CART_ADD'), {}, {
+      'user': storedUser.id.toString(),
+      'rfid': rfid,
     }).then((Response response) async {
-      CustomUtils.hideLoader(context);
+      data = JsonResponse.fromJson(response.data).data['products'];
+    });
+    return data;
+  }
+
+  Future<dynamic> doPayment(context) async {
+    User? storedUser = await User.getUser();
+    dynamic data = [];
+    await _httpController.doGet(APIRoutes.getRoute('DONE_PAYMENT'), {}, {
+      'user': storedUser.id.toString(),
+    }).then((Response response) async {
       data = JsonResponse.fromJson(response.data).data;
     });
     return data;
   }
 
-  Future<dynamic> addCartProduct(context, String rfid) async {
-    dynamic _data = [];
-    await _httpController.doGet(APIRoutes.getRoute('CART_ADD'), {}, {
-      'user': CustomUtils.getUser().id.toString(),
-      'rfid': rfid,
-    }).then((Response response) async {
-      _data = JsonResponse.fromJson(response.data).data['products'];
-    });
-    return _data;
-  }
-
-  Future<dynamic> doPayment(context) async {
-    dynamic _data = [];
-    await _httpController.doGet(APIRoutes.getRoute('DONE_PAYMENT'), {}, {
-      'user': CustomUtils.getUser().id.toString(),
-    }).then((Response response) async {
-      _data = JsonResponse.fromJson(response.data).data;
-    });
-    return _data;
-  }
-
   Future<dynamic> getCartPaidProducts(context, data) async {
-    dynamic _data = [];
+    dynamic data0 = [];
     await _httpController
         .doGet(APIRoutes.getRoute('CART_PAID_PRODUCTS_GET'), {}, data)
         .then((Response response) async {
-          print(response);
-      _data = JsonResponse.fromJson(response.data).data;
+      print(response);
+      data0 = JsonResponse.fromJson(response.data).data;
     });
 
-    return _data;
+    return data0;
   }
 
   Future<dynamic> verifyCart(context, data) async {
-    dynamic _data = [];
+    dynamic data0 = [];
     await _httpController
         .doGet(APIRoutes.getRoute('VERIFY_CART'), {}, data)
         .then((Response response) async {
-          print(response);
-      _data = JsonResponse.fromJson(response.data).data;
+      print(response);
+      data0 = JsonResponse.fromJson(response.data).data;
     });
 
-    return _data;
+    return data0;
   }
 
   Future<void> deleteCartProduct(context, data) async {
-    data['user'] = CustomUtils.getUser().id.toString();
+    User? storedUser = await User.getUser();
+    data['user'] = storedUser.id.toString();
     await _httpController
         .doGet(APIRoutes.getRoute('CART_PRODUCTS_REMOVE'), {}, data)
         .then((Response response) async {});
   }
 
   Future<dynamic> getHistory(context) async {
-    dynamic _data = [];
+    User? storedUser = await User.getUser();
+    dynamic data = [];
     await _httpController.doGet(APIRoutes.getRoute('HISTORY'), {}, {
-      'user': CustomUtils.getUser().id.toString(),
+      'user': storedUser.id.toString(),
     }).then((Response response) async {
       print(response);
-      _data = JsonResponse.fromJson(response.data).data;
+      data = JsonResponse.fromJson(response.data).data;
     });
-    return _data;
+    return data;
   }
 }

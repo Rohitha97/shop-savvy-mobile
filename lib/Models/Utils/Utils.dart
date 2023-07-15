@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopsavvy/Models/DB/User.dart';
 import 'package:shopsavvy/Models/Strings/common.dart';
 import 'package:shopsavvy/Models/Utils/Colors.dart';
@@ -18,7 +17,7 @@ class CustomUtils {
   static const int ERROR_SNACKBAR = 3;
 
   static late String loggedInToken;
-  static late User loggedInUser;
+  static User? loggedInUser;
 
   static Map<int, Color> tabViewColor = {
     50: color1,
@@ -47,12 +46,14 @@ class CustomUtils {
     return loggedInToken;
   }
 
-  static User getUser() {
+  static User? getUser() {
     return loggedInUser;
   }
 
   static setLoggedUser(jsonData) async {
     loggedInUser = User.fromJson(jsonData);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("user", jsonEncode(loggedInUser!.toJson()));
     return loggedInUser;
   }
 
@@ -61,28 +62,6 @@ class CustomUtils {
       context: context,
       builder: (_) => Loading(),
     );
-  }
-
-  static String ordinal(int number) {
-    if (!(number >= 1 && number <= 100)) {
-      //here you change the range
-      throw Exception('Invalid number');
-    }
-
-    if (number >= 11 && number <= 13) {
-      return 'th';
-    }
-
-    switch (number % 10) {
-      case 1:
-        return 'st';
-      case 2:
-        return 'nd';
-      case 3:
-        return 'rd';
-      default:
-        return 'th';
-    }
   }
 
   static Future<bool> confirmationAction(context, title, message) async {
@@ -97,30 +76,12 @@ class CustomUtils {
     Navigator.pop(context);
   }
 
-  static String getCurrentDate() {
-    return DateFormat("yyyy/MM/dd").format(DateTime.now());
-  }
-
   static String formatDate(DateTime date) {
     return DateFormat("yyyy/MM/dd").format(date);
   }
 
   static String formatTime(DateTime date) {
     return DateFormat("hh:mm a").format(date);
-  }
-
-  static String formatTimeAPI(DateTime date) {
-    return DateFormat("hh:mm:ss").format(date);
-  }
-
-  static showToast(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.white,
-        textColor: Colors.black,
-        fontSize: 16.0);
   }
 
   static showSnackBar(context, message, int type) {
@@ -294,62 +255,5 @@ class CustomUtils {
         ),
       ),
     ));
-  }
-
-  static getShadow() {
-    return <BoxShadow>[
-      const BoxShadow(
-        color: Colors.black12,
-        spreadRadius: -2,
-        blurRadius: 5,
-        offset: Offset(0, 4), // changes position of shadow
-      ),
-    ];
-  }
-
-  static getShadowForRoundedButton() {
-    return <BoxShadow>[
-      const BoxShadow(
-          color: Colors.black12,
-          spreadRadius: -2,
-          blurRadius: 5,
-          offset: Offset(0, 4))
-    ];
-  }
-
-  static serverConnectionNotFound() {
-    return Fluttertoast.showToast(
-        msg: "Unable to connect with server...",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: color4,
-        textColor: color6,
-        fontSize: 14.0);
-  }
-
-  static Future<Position> getCurrentPosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return await Geolocator.getCurrentPosition();
   }
 }

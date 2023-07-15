@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shopsavvy/Models/Utils/JsonResponse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,6 +16,16 @@ class User {
         name = json['name'],
         usertype = json['usertype'],
         email = json['email'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': this.id,
+      'status': this.status,
+      'usertype': this.usertype,
+      'name': this.name,
+      'email': this.email,
+    };
+  }
 
   static saveToken(JsonResponse resp) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,17 +44,20 @@ class User {
     return prefs.clear();
   }
 
-  static Future needVerifyWithBiometrics() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('bio');
+  static Future<void> saveUser(JsonResponse resp) async {
+    print(resp.data["user"]);
+    CustomUtils.setLoggedUser(resp.data["user"]);
   }
 
-  static Future acceptBiometrics() async {
+  static Future<User> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setBool('bio', true);
-  }
-
-  static saveUser(JsonResponse resp) async {
-    await CustomUtils.setLoggedUser(resp.data["user"]);
+    String? userString = prefs.getString('user');
+    print('get dat $userString');
+    if (userString != null) {
+      Map<String, dynamic> userMap =
+          Map<String, dynamic>.from(jsonDecode(userString));
+      return User.fromJson(userMap);
+    }
+    throw Exception('No user data found');
   }
 }

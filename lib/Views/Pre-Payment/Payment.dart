@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
 import 'package:shopsavvy/Controllers/ProductsController.dart';
+import 'package:shopsavvy/Models/DB/User.dart';
 import 'package:shopsavvy/Models/Strings/reservation.dart';
 import 'package:shopsavvy/Models/Utils/Colors.dart';
 import 'package:shopsavvy/Models/Utils/Common.dart';
@@ -32,6 +33,22 @@ class _ReservationPaymentState extends State<ReservationPayment> {
   _ReservationPaymentState({required this.total, required this.orderNumber});
 
   final ProductsController _productsController = ProductsController();
+
+  User? storedUser;
+  bool isDataLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    storedUser = await User.getUser();
+    setState(() {
+      isDataLoaded = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,18 +138,18 @@ class _ReservationPaymentState extends State<ReservationPayment> {
                               onclickFunction: () async {
                                 Map paymentObject = {
                                   "sandbox": true,
-                                  "merchant_id": "1223363",
+                                  "merchant_id": "1223347",
                                   "merchant_secret":
-                                      "MzUwNDY0MDAxNDE2NTYwMTQ0ODM1MDIzOTE1MzAyMzAzNDAzMjg0",
-                                  "notify_url": "https://aries.lk",
+                                      "MTIzODI3MzI2NTI2MDIxOTI1MzUyODc3Nzc2NzMxNDY5OTYwMzEy",
+                                  "notify_url":
+                                      "https://shop-savvy.000webhostapp.com/",
                                   "order_id": "$orderNumber",
                                   "items": "$orderNumber",
                                   "amount": "$total",
                                   "currency": "LKR",
-                                  "first_name":
-                                      "${CustomUtils.loggedInUser.name}",
+                                  "first_name": "${storedUser?.name}",
                                   "last_name": "User",
-                                  "email": "${CustomUtils.loggedInUser.email}",
+                                  "email": "${storedUser?.email}",
                                   "phone": "0771234567",
                                   "address": "No.1, Galle Road",
                                   "city": "Colombo",

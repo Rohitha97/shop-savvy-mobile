@@ -1,5 +1,5 @@
 class APIRoutes {
-  static const String _baseRoute = 'https://shop-savvy.000webhostapp.com/api/';
+  static const String _baseRoute = 'http://192.168.1.102:8000/api/';
 
   static String getRoute(String key) {
     switch (key) {
@@ -23,9 +23,6 @@ class APIRoutes {
         break;
       case 'CART_PRODUCTS_REMOVE':
         key = '${_baseRoute}cart/products/remove';
-        break;
-      case 'CART_SUGGETIONS_PRODUCT_GET':
-        key = '${_baseRoute}cart/products/suggetions';
         break;
       case 'CART_ADD':
         key = '${_baseRoute}cart/add';
