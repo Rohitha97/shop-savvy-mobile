@@ -1,10 +1,8 @@
-# Shop Savvy - Mobile App (Customer and Cashier)
+# Shop Savvy - Mobile App (Customers and Cashiers)
 
-<p align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/73746343/278825737-a8735fd6-2da8-4111-8a32-393cd9d88a3e.png" width="200" alt="Laravel Logo"></p>
-
+<p align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/73746343/278825737-a8735fd6-2da8-4111-8a32-393cd9d88a3e.png" width="200" alt="Shop Savvy Logo"></p>
 
 The "Shop Savvy" system is a mobile e-commerce-based self-checkout system designed to revolutionize the fashion retail experience in Sri Lanka. This project aims to provide convenience and efficiency to customers by enabling them to make purchases and complete the checkout process using their mobile devices. Through comprehensive research, evaluation, and implementation, the project has successfully achieved its goals.
-
 
 ## Features
 
@@ -28,23 +26,20 @@ The "Shop Savvy" system is a mobile e-commerce-based self-checkout system design
 
 - **Contactless Shopping**: Promotes contactless payments, making the shopping experience safer.
 
-
 ## Getting Started with the Flutter App
 
 Follow these steps to get started with the "Shop Savvy" Flutter app:
 
-1. **Clone the Repository**: `git clone [git@github.com:Rohitha97/shop-savvy-mobile.git]`
+1. **Clone the Repository**: Use `git clone [git@github.com:Rohitha97/shop-savvy-mobile.git]` to clone the repository.
 
 2. **Install Dependencies**: Use `flutter pub get` to install the required Flutter dependencies.
 
 3. **Launch the Application**: Run `flutter run` to start the Flutter app on your device or emulator.
 
-4. **Access the Application**: Explore the Shop Savvy mobile app on your device, and start shopping with convenience.
-
+4. **Access the Application**: Explore the Shop Savvy mobile app on your device and start shopping with convenience.
 
 ## Contact
 
 For questions or inquiries, please contact [rohith_rathnayake@yahoo.com].
 
 ---
-
